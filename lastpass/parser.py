@@ -125,15 +125,19 @@ def parse_secure_note_server(notes):
     for i in notes.split(b'\n'):
         if not i:  # blank line
             continue
-        # Split only once so that strings like "Hostname:host.example.com:80"
-        # get interpreted correctly
-        key, value = i.split(b':', 1)
-        if key == b'Hostname':
-            url = value
-        elif key == b'Username':
-            username = value
-        elif key == b'Password':
-            password = value
+        try:
+            # Split only once so that strings like "Hostname:host.example.com:80"
+            # get interpreted correctly
+            key, value = i.split(b':', 1)
+            if key == b'Hostname':
+                url = value
+            elif key == b'Username':
+                username = value
+            elif key == b'Password':
+                password = value
+        except ValueError:
+            # No colon in line; can occur if user inserted a line break somewhere
+            continue
 
     return [url, username, password]
 
